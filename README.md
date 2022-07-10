@@ -1,34 +1,53 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Netflix Clone made by Alp Durak
 
-First, run the development server:
+This project was made purely because of boredom but seemed to turn out not bad, if you want to contribute or just use the clone this guide will help you understand it.
 
-```bash
-npm run dev
-# or
-yarn dev
+
+
+## How to use
+
+> install required packages
+```
+yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> start the development server
+```
+yarn dev
+```
+(all scripts are next.js scripts you can learn about them in their documentation)
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Learn about the Components
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+> ViewCard
+```javascript
+<Slider id="<a unique ID>">
+    ...
+</Slider>
+```
+```javascript
+<div className={styles.showWrap}>
+    <h1 style={{ marginLeft: "55px" }}>Trending Now</h1>
+    <Slider id="1" className={styles.showList}>
+        ...
+    </Slider>
+</div>
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+> ViewCard
+```javascript
+<ViewCard src={"<thumbnail of the show>"} />
+```
+```javascript
+// 50% of the show is watched
+<ViewCard watched={50} src={"<16:9 thumbnail of the show>"} />
+```
 
-## Learn More
+> RankCard
+```javascript
+// Top 3
+<RankCard rating={3} src={"<9:16 thumbnaik of the show>"} />
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+That's it you're all set :)
