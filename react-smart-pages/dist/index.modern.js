@@ -1,13 +1,46 @@
 import React from 'react';
+import { Route } from 'react-router-dom';
+import fs from 'fs';
 
-var styles = {"test":"_3ybTi"};
+function importAllFiles(directoryPath, options) {
+  var fileType = options.fileType,
+      fileCategory = options.fileCategory;
+  if (!fileCategory) throw Error('fileCategory is required for importAllFiles.');
+  if (!fileType) throw Error('fileType is required for importAllFiles.');
+  if (!directoryPath) throw Error('directoryPath is required for importAllFiles.');
+  var regexp = new RegExp('.' + (fileCategory + "." + fileType) + '$');
+  var files = fs.readdirSync(directoryPath);
+  var filesObject = {};
+  files.forEach(function (file) {
+    if (regexp.test(file)) {
+      filesObject[file.replace('./', '')] = require(directoryPath + "/" + file);
+    }
+  });
+  return filesObject;
+}
 
-var ExampleComponent = function ExampleComponent(_ref) {
-  var text = _ref.text;
-  return /*#__PURE__*/React.createElement("div", {
-    className: styles.test
-  }, "Example Component: ", text);
-};
+function SmartRoute(_ref) {
+  var directoryPath = _ref.directoryPath,
+      options = _ref.options;
+  if (!directoryPath) throw new Error('directoryPath is required for SmartRoute.');
+  var parentPages = importAllFiles(directoryPath, {
+    fileType: (options === null || options === void 0 ? void 0 : options.fileType) || 'js',
+    fileCategory: (options === null || options === void 0 ? void 0 : options.fileCategory) || 'parentPage',
+    checkTree: true
+  });
+  return /*#__PURE__*/React.createElement(React.Fragment, null, Object.keys(parentPages).map(function (key, i) {
+    var page = parentPages[key]["default"];
+    var Element = page[1];
+    return /*#__PURE__*/React.createElement(Route, {
+      key: i
+    }, /*#__PURE__*/React.createElement(Route, {
+      path: "/" + page[0].pathName,
+      element: /*#__PURE__*/React.createElement(Element, null)
+    }), page[2]().map(function (e) {
+      return e;
+    }));
+  }));
+}
 
-export { ExampleComponent };
+export { SmartRoute };
 //# sourceMappingURL=index.modern.js.map

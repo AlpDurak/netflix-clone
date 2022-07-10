@@ -1,0 +1,33 @@
+.viewCard {
+  width: 229.9px;
+  height: 129.44px;
+  cursor: pointer;
+  position: relative;
+  transition-duration: 0.3s;
+}
+
+.viewCardImage {
+  border-radius: 3px;
+}
+
+.viewCard:hover {
+  transform: scale(1.12);
+  z-index: 10;
+}
+
+.viewCard > .progressBar {
+  width: 100%;
+  height: 4px;
+  background: var(--progress-gray-color);
+
+  position: absolute;
+  bottom: 0;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  overflow: hidden;
+}
+
+.viewCard > .progressBar > div {
+  height: 100%;
+  background: var(--brand-color);
+}

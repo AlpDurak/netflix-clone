@@ -1,1 +1,6 @@
 node_modules/
+src/
+yarn.lock
+package.json
+favicon.ico
+manifest.json

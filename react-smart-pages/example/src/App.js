@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { ExampleComponent } from 'react-smart-pages'
+import { SmartRoute } from 'react-smart-pages'
 import 'react-smart-pages/dist/index.css'
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
+  return <SmartRoute directoryPath='./awafwf/dwadw/parentPages/' />
 }
 
 export default App
