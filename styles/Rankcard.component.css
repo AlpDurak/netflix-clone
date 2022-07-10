@@ -1,0 +1,54 @@
+.rankCardWrap {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  justify-content: flex-end;
+  align-items: center;
+  width: 229.9px;
+  height: 164.21px;
+}
+
+.rankCard {
+  height: 100%;
+  width: 114.95px;
+  position: relative;
+  cursor: pointer;
+  transition-duration: 0.3s;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rankCard:hover {
+  transform: scale(1.1);
+}
+
+.rankCardRank {
+  font-size: 200px;
+  margin: 0;
+  line-height: 75%;
+  text-align: center;
+  right: -10%;
+  top: -10px;
+  position: relative;
+  color: var(--black-color);
+  -webkit-text-stroke: 4px var(--transparentGray-color);
+}
+
+.rankCardWrap:nth-child(1) .rankCardRank {
+  letter-spacing: -0.75rem;
+}
+
+.rankCardWrap:nth-child(10) .rankCardRank {
+  letter-spacing: -1.5rem;
+  left: -10px;
+}
+
+.rankCardWrap:nth-child(10) .rankCard {
+  position: absolute;
+  right: 0;
+}
+
+.rankCardWrap:nth-child(10) {
+  justify-content: flex-start;
+}
