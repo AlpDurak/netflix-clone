@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "license": "MIT",
   "dependencies": {
     "@iconify/react": "^3.2.2",
     "next": "12.2.0",
