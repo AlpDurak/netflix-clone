@@ -46,34 +46,47 @@ export default function Home() {
   const [videoClass, setVideoClass] = useState("");
   const [muted, setMuted] = useState(false);
 
+  // start video function so we don't have repeat code
+  function startVideo(errorMessage, interval) {
+    video
+      .play()
+      .then(() => {
+        // marks the video as playing
+        setTrailorStatus("playing");
+        // loads the needed styles to make the video be on top of the shows display image
+        setVideoClass(styles.videoLoaded);
+        // clear the interval
+        if (interval) {
+          clearInterval(interval);
+        }
+      })
+      .catch((error) => {
+        console.info(errorMessage);
+      });
+  }
+
   // automatic video player
   useEffect(() => {
+    // refreshes the video element
+    if (trailorStatus === "refreshed") {
+      startVideo("Video could not be refreshed");
+    }
     // checks if the video is ready to be played
     if (trailorStatus === "loaded") {
       // waits for 2 seconds so the video doesnt play instantly when the page loads
       setTimeout(() => {
         // tries to play the video because if the user has not interracted with the page you cant auto play a video
         const tryToPlay = setInterval(() => {
-          video
-            .play()
-            .then(() => {
-              // marks the video as playing
-              setTrailorStatus("playing");
-              // loads the needed styles to make the video be on top of the shows display image
-              setVideoClass(styles.videoLoaded);
-              // stops the interval
-              clearInterval(tryToPlay);
-            })
-            .catch((error) => {
-              console.info("User has not interacted with document yet.");
-            });
+          startVideo("User has not interacted with document yet.", tryToPlay);
         }, 2000);
       }, 2000);
     } else if (trailorStatus === "ended" && videoClass === styles.videoLoaded) {
       // if the video is ended this makes it go under the display image so it doesn't show a stopped video that you cant restart
       setVideoClass("");
     }
-  }, [trailorStatus]);
+
+    //eslint-disable-next-line
+  }, [trailorStatus, video, videoClass]);
 
   // adds event listeners to the video document, we do this because react events didnt seem to work for some reason
   useEffect(() => {
@@ -106,23 +119,34 @@ export default function Home() {
       <header className={styles.showDisplay_container}>
         <div className={styles.floatBottomRight}>
           {/* Mute Video Button */}
-          {trailorStatus === "playing" && (
+          {(trailorStatus === "playing" || trailorStatus === "ended") && (
             <div
-              onClick={() => setMuted((oldState) => !oldState)}
+              onClick={() => {
+                if (trailorStatus === "ended") {
+                  setTrailorStatus("refreshed");
+                } else {
+                  setMuted((oldState) => !oldState);
+                }
+              }}
               className={styles.muteButton}
             >
               {muted ? (
                 <Icon
                   icon="heroicons-outline:volume-off"
                   color="white"
-                  fontSize={20}
+                  fontSize="1.35vw"
                 />
               ) : (
-                <Icon
-                  icon="heroicons-outline:volume-up"
-                  color="white"
-                  fontSize={20}
-                />
+                trailorStatus !== "ended" && (
+                  <Icon
+                    icon="heroicons-outline:volume-up"
+                    color="white"
+                    fontSize="1.35vw"
+                  />
+                )
+              )}
+              {trailorStatus === "ended" && (
+                <Icon icon="ic:round-refresh" color="white" fontSize="1.5vw" />
               )}
             </div>
           )}
@@ -131,7 +155,12 @@ export default function Home() {
         </div>
         <div className={styles.showDisplay_details}>
           {/* Displayed Shows Logo */}
-          <Image priority={true} layout="responsive" src={GlamourLogo} />
+          <Image
+            alt="Display Image Logo"
+            priority={true}
+            layout="responsive"
+            src={GlamourLogo}
+          />
           <p>
             {/* Its Description */}
             The world of high-end escorts promises glamour, wealth and the
@@ -153,6 +182,7 @@ export default function Home() {
         <div className={styles.displayImageOuter}>
           {/* Display Image */}
           <Image
+            alt="Dislay Image"
             className={styles.displayImage}
             src={GlamourDisplayImage}
             layout="responsive"
@@ -195,7 +225,7 @@ export default function Home() {
         </div>
         {/* SHOWS ROW WITH SLIDER */}
         <div className={styles.showWrap}>
-          <h1 style={{ marginLeft: "55px" }}>Trending Now</h1>
+          <h1 style={{ marginLeft: "4.5vw" }}>Trending Now</h1>
           <Slider id="1" className={styles.showList}>
             <ViewCard src={Show6} />
             <ViewCard src={Show11} />
@@ -221,7 +251,7 @@ export default function Home() {
         </div>
         {/* TOP10 RATINGS WITH SLIDER */}
         <div className={styles.showWrap}>
-          <h1 style={{ marginLeft: "55px" }}>
+          <h1 style={{ marginLeft: "4.5vw" }}>
             Top 10 TV Shows in Turkey Today
           </h1>
           <Slider id="2" className={styles.showList}>
@@ -238,7 +268,7 @@ export default function Home() {
           </Slider>
         </div>
         <div className={styles.showWrap}>
-          <h1 style={{ marginLeft: "55px" }}>Top Picks for Alp</h1>
+          <h1 style={{ marginLeft: "4.5vw" }}>Top Picks for Alp</h1>
           <Slider id="3" className={styles.showList}>
             <ViewCard src={Show6} />
             <ViewCard src={Show11} />
@@ -258,7 +288,7 @@ export default function Home() {
           </Slider>
         </div>
         <div className={styles.showWrap}>
-          <h1 style={{ marginLeft: "55px" }}>Watch It Again</h1>
+          <h1 style={{ marginLeft: "4.5vw" }}>Watch It Again</h1>
           <Slider id="4" className={styles.showList}>
             <ViewCard src={Show2} />
             <ViewCard src={Show5} watched={5} />

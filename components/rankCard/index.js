@@ -5,7 +5,12 @@ export default function RankCard({ rating, src }) {
       {/* Top ... Card Component */}
       <h1 className="rankCardRank">{rating}</h1>
       <div className="rankCard">
-        <Image className="rankCardImage" layout="fill" src={src} />
+        <Image
+          alt="Some Show"
+          className="rankCardImage"
+          layout="responsive"
+          src={src}
+        />
       </div>
     </div>
   );

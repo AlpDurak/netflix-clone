@@ -23,7 +23,7 @@ export default function Slider({ children, id, className }) {
       chevronRight.style.display = "flex";
     }
 
-    slideElements.style.left = `${55 + -(slideRow * 1175)}px`;
+    slideElements.style.left = `calc(4.5vw + ${-(slideRow * 91.4)}vw)`;
   }),
     [slideRow];
 

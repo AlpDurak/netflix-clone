@@ -5,13 +5,11 @@
   gap: 0;
   justify-content: flex-end;
   align-items: center;
-  width: 229.9px;
-  height: 164.21px;
+  width: 17.89vw;
 }
 
 .rankCard {
-  height: 100%;
-  width: 114.95px;
+  width: 9.3vw;
   position: relative;
   cursor: pointer;
   transition-duration: 0.3s;
@@ -24,7 +22,7 @@
 }
 
 .rankCardRank {
-  font-size: 200px;
+  font-size: 15vw;
   margin: 0;
   line-height: 75%;
   text-align: center;
@@ -36,11 +34,11 @@
 }
 
 .rankCardWrap:nth-child(1) .rankCardRank {
-  letter-spacing: -0.75rem;
+  letter-spacing: -0.9vw;
 }
 
 .rankCardWrap:nth-child(10) .rankCardRank {
-  letter-spacing: -1.5rem;
+  letter-spacing: -2vw;
   left: -10px;
 }
 
@@ -51,4 +49,5 @@
 
 .rankCardWrap:nth-child(10) {
   justify-content: flex-start;
+  height: 14vw;
 }

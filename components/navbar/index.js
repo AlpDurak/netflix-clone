@@ -35,7 +35,7 @@ export default function Navbar() {
     <nav className={navbarDynamicClass}>
       <div className="navbar-left_container">
         {/* Netflix Logo */}
-        <Image src={Logo} width={92.5} height={25} />
+        <Image alt="Netflix Logo" src={Logo} width={92.5} height={25} />
         <ul className="navbar-links">
           {/* Navbar Links */}
           <li className="navbar-link active">
@@ -77,6 +77,7 @@ export default function Navbar() {
         {/* Profile (functionality may be added in future versions) */}
         <div className="profile-container">
           <Image
+            alt="Profile Image"
             className="profile-image"
             src={Avatar}
             width={32}
