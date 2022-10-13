@@ -3,7 +3,7 @@
 
 This project was made purely because of boredom but seemed to turn out not bad, if you want to contribute or just use the clone this guide will help you understand it.
 
-
+[Go To Online Demo](https://netflix-clone-alpdurak.vercel.app/browse)
 
 ## How to use
 
