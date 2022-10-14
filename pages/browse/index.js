@@ -172,7 +172,7 @@ export default function Home() {
                     <p>
                         {/* Its Description */}
                         A prince cursed to spend his days as a hideous monster sets out to regain his humanity by
-                        earning a young woman's love.
+                        earning a young woman&apos;s love.
                     </p>
 
                     {/* Play and More Info Buttons */}
