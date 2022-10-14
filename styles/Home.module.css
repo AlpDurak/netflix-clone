@@ -139,7 +139,7 @@
   font-size: 1.1vw;
 }
 
-.trailorVideo {
+.trailerVideo {
   width: 100%;
   height: calc(100vw / (16 / 9));
   position: absolute;
