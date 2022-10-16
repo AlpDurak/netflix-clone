@@ -15,9 +15,11 @@
   "license": "MIT",
   "dependencies": {
     "@iconify/react": "^3.2.2",
+    "moment": "^2.29.4",
     "next": "12.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-player": "^2.11.0",
     "sharp": "^0.30.7"
   },
   "devDependencies": {

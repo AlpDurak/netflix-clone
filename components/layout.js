@@ -7,7 +7,11 @@ export default function Layout({children}) {
     return (
         <div className="layout_container">
             {/* Layout (footer will be added) */}
-            <Navbar/>
+            {
+                !router?.pathname.includes("/watch") && (
+                        <Navbar/>
+                )
+            }
             {children}
         </div>
     )

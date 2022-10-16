@@ -1,5 +1,229 @@
-.videoPlayerCoverScr {
+/* .videoPlayer {
+    position: relative;
     width: 100vw;
-    height: 100vh;
+    height: 103vh;
     z-index: 0;
+}
+
+.videoTimeline {
+    width: 100%;
+}
+
+.videoPlayer>video::-webkit-media-text-track-display {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    font-size: 2.2vw;
+    text-shadow: #000000 0px 0px 7px;
+}
+
+.videoPlayer>video {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+} */
+.section {
+    width: 100%;
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+
+    max-height: 100vh;
+
+    overflow: hidden;
+
+    background-color: #000000;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bottomUi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding-inline: 20px;
+
+    position: absolute;
+    bottom: calc(6vh);
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 80%);
+    z-index: 1;
+
+    padding-bottom: 1vh;
+}
+
+.container .videoPlayer {
+    height: 100%;
+    display: flex;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s;
+    justify-content: center;
+}
+
+.container .videoPlayer video {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 0.3rem;
+    z-index: 0;
+}
+
+.controls {
+    height: 100px;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    min-width: 100%;
+    max-width: 100%;
+    align-items: center;
+    transition: all 0.2s;
+    justify-content: space-between;
+    position: relative;
+}
+
+.videoPlayer .bottomUi .videoProgressBar {
+    width: calc(100% - 10px);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.videoPlayer .bottomUi .videoProgressBar .progress {
+    position: relative;
+    background-color: gray;
+    display: flex;
+    height: 0.250rem;
+    cursor: pointer;
+    border-radius: 1px;
+    align-items: center;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.videoPlayer .bottomUi .videoProgressBar .progress .dot {
+    left: 0%;
+    width: 1rem;
+    height: 1rem;
+    max-width: 100%;
+    position: absolute;
+    border-radius: 50%;
+    cursor: context-menu;
+    background-color: var(--brand-color);
+}
+
+.videoPlayer .bottomUi .videoProgressBar .progress .videoProgressDuration {
+    width: 0%;
+    height: 0.3rem;
+    max-width: 100%;
+    position: absolute;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background-color: var(--brand-color);
+}
+
+.videoPlayer .bottomUi .controls i {
+    color: #fff;
+}
+
+.controls .centerControls {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.controls .centerControls > h1 {
+    font-weight: normal;
+}
+
+.leftControls,
+.centerControls,
+.rightControls {
+    display: flex;
+}
+
+.controls .leftControls {
+    gap: 30px;
+}
+
+.controls .leftControls > * {
+    cursor: pointer;
+}
+
+.controls .leftControls .volume {
+    display: flex;
+    font-size: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls .leftControls .volume i {
+    cursor: pointer;
+}
+
+.controls .leftControls .volume input[type="range"] {
+    width: 80%;
+    height: 0.3rem;
+    cursor: pointer;
+    appearance: none;
+    overflow: hidden;
+    margin-left: 0.4rem;
+    transition: all 0.2s;
+    border-radius: 0.5rem;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.controls .leftControls .volume input[type="range"]:hover {
+    height: 0.6rem;
+}
+
+.controls .leftControls .volume input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 40px;
+    border-radius: 0.5rem;
+    background: #fff;
+    box-shadow: -100vw 0 0 100vw #3968bf;
+    border: 2px solid #999;
+}
+
+.controls .leftControls .volume input[type="range"]::-webkit-slider-runnable-track {
+    appearance: none;
+    color: #13bba4;
+}
+
+.controls .rightControls i {
+    cursor: pointer;
+    color: #fff;
+}
+
+.hide {
+    display: none !important;
+}
+
+.playPauseBtn {
+    border: none;
+    background: none;
+    outline: none;
+    padding: none;
+    margin: none;
+}
+
+@media(max-width: 768px) {
+    .leftControls .volume input {
+        display: none;
+    }
 }
