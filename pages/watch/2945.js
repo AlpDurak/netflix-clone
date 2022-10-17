@@ -1,38 +1,71 @@
-import React from "react";
-import styles from "/styles/Player.module.css";
-
-export default function VideoPlayer() {
-  return (
-    <iframe
-      className={styles.videoPlayerCoverScr}
-      title="Güzel ve Çirkin"
-      src="https://videoseyred.in/embed/d6b2181aabh4Tx145822UcQq85d7442f20?hideTitle=1"
-      frameBorder={0}
-      allowFullScreen
-    ></iframe>
-  );
-}
-
-/* import { Icon } from "@iconify/react";
+import { Icon } from "@iconify/react";
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "/styles/Player.module.css";
 
 export default function VideoPlayer() {
   const videoElement = useRef();
   const [status, setStatus] = useState("loading");
-  const [currentProgress, setCurrentProgress] = useState(20);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(); // seconds
+  const timeInterval = useRef();
+  const videoPlayer = useRef();
+
+  let duration = videoElement.current?.duration;
+  let watched = (currentTime / duration) * 100;
+
+  const exitHandler = () => {
+    if (
+      !document.fullscreenElement &&
+      !document.webkitIsFullScreen &&
+      !document.mozFullScreen &&
+      !document.msFullscreenElement
+    ) {
+      setFullscreen(false);
+    }
+  };
 
   useEffect(() => {
-    console.log(videoElement.current?.currentTime)
-  }, [videoElement.current?.currentTime])
+    document.addEventListener("fullscreenchange", exitHandler);
+    document.addEventListener("webkitfullscreenchange", exitHandler);
+    document.addEventListener("mozfullscreenchange", exitHandler);
+    document.addEventListener("MSFullscreenChange", exitHandler);
+  }, []);
 
-  var actualMinutes = parseInt((videoElement.current?.duration / 60) - (videoElement.current?.currentTime / 60), 10);
+  useEffect(() => {
+    setCurrentTime(videoElement.current?.currentTime);
+  }, [videoElement.current?.currentTime]);
+
+  useEffect(() => {
+    if (status === "playing" && !timeInterval.current) {
+      timeInterval.current = setInterval(() => {
+        setCurrentTime((current) => current + 1);
+      }, 1000);
+    }
+
+    if (status === "paused" && timeInterval.current) {
+      clearInterval(timeInterval.current);
+      timeInterval.current = null;
+    }
+
+    if (status === "ended" && timeInterval.current) {
+      clearInterval(timeInterval.current);
+      timeInterval.current = null;
+    }
+  }, [status]);
+
+  if (videoElement.current?.ended && status !== "ended") {
+    setStatus("ended");
+  }
+
+  var actualMinutes =
+    (duration - currentTime) / 60 ||
+    parseInt(duration / 60 - currentTime / 60, 10);
   var hours = ~~(actualMinutes / 60);
   let minutes = ~~(((actualMinutes - hours * 60) * 60) / 60);
   minutes = minutes < 10 ? "0" + minutes : minutes;
   let extraSeconds = ((actualMinutes - hours * 60) * 60) % 60;
-  extraSeconds = extraSeconds < 10 ? "0" + extraSeconds : extraSeconds;
+  extraSeconds = extraSeconds < 10 ? "0" + ~~extraSeconds : ~~extraSeconds;
 
   const startVideo = () => {
     videoElement.current.play();
@@ -47,21 +80,84 @@ export default function VideoPlayer() {
   const toggleVideo = () => {
     if (videoElement.current.paused) {
       startVideo();
+    } else if (videoElement.current.ended) {
+      videoElement.current.currentTime = 0;
+      startVideo();
     } else {
       stopVideo();
+    }
+  };
+
+  const toggleFullscreen = () => {
+    if (!fullscreen) {
+      setFullscreen(true);
+      if (videoPlayer.current.requestFullscreen) {
+        videoPlayer.current.requestFullscreen();
+      } else if (videoPlayer.current.mozRequestFullScreen) {
+        videoPlayer.current.mozRequestFullScreen();
+      } else if (videoPlayer.current.webkitRequestFullScreen) {
+        videoPlayer.current.webkitRequestFullScreen();
+      } else if (videoPlayer.current.msRequestFullscreen) {
+        videoPlayer.current.msRequestFullscreen();
+      }
+    } else {
+      setFullscreen(false);
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  };
+
+  const updateDuration = (seconds, action) => {
+    let current = currentTime;
+    if (action === "-") {
+      if (current - seconds < 0) {
+        const calc = Math.abs(current - seconds) - seconds;
+
+        videoElement.current.currentTime = calc;
+        setCurrentTime(calc);
+      } else {
+        const calc = current - seconds;
+
+        videoElement.current.currentTime = calc;
+        setCurrentTime(calc);
+      }
+    }
+
+    if (action === "+") {
+      if (current + seconds > duration) {
+        const calc = seconds - (current + seconds - duration);
+
+        videoElement.current.currentTime = calc;
+        setCurrentTime(calc);
+      } else {
+        const calc = current + seconds;
+
+        videoElement.current.currentTime = calc;
+        setCurrentTime(calc);
+      }
     }
   };
 
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <div className={styles.videoPlayer}>
+        <div ref={videoPlayer} className={styles.videoPlayer}>
           <div className={styles.bottomUi}>
             <div className={styles.videoProgressBar}>
               <div className={styles.progress}>
-                <div className={styles.videoProgressDuration}></div>
                 <div
-                  style={{ left: currentProgress + "%" }}
+                  style={{ width: watched + "%" }}
+                  className={styles.videoProgressDuration}
+                ></div>
+                <div
+                  style={{ left: watched + "%" }}
                   className={styles.dot}
                 ></div>
               </div>
@@ -71,7 +167,7 @@ export default function VideoPlayer() {
               <div className={styles.leftControls}>
                 <button
                   onClick={() => toggleVideo()}
-                  className={styles.playPauseBtn}
+                  className="invisibleButton pop"
                 >
                   {status !== "playing" ? (
                     <Icon
@@ -90,35 +186,54 @@ export default function VideoPlayer() {
                   )}
                 </button>
 
-                <Icon icon="ic:round-replay-10" fontSize={53} color="white" />
-                <Icon icon="ic:round-forward-10" color="white" fontSize={53} />
+                <button className="invisibleButton pop">
+                  <Icon
+                    icon="ic:round-replay-10"
+                    onClick={() => updateDuration(10, "-")}
+                    color="white"
+                    fontSize={53}
+                  />
+                </button>
+                <button className="invisibleButton pop">
+                  <Icon
+                    icon="ic:round-forward-10"
+                    onClick={() => updateDuration(10, "+")}
+                    color="white"
+                    fontSize={53}
+                  />
+                </button>
 
-                <div className={styles.volume}>
+                <button className={`${styles.volume} invisibleButton pop`}>
                   <Icon
                     icon="eva:volume-up-outline"
                     color="white"
-                    fontSize={50}
+                    fontSize={45}
                   />
-                  <input
-                    className={styles.hide}
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={`${currentProgress}`}
-                  />
-                </div>
+                  <input className={styles.hide} type="range" />
+                </button>
               </div>
               <div className={styles.centerControls}>
                 <h1>Beauty and The Beast</h1>
               </div>
               <div className={styles.rightControls}>
-                <div className={styles.fullScreen}>
-                  <Icon
-                    icon="mingcute:fullscreen-line"
-                    color="white"
-                    fontSize={50}
-                  />
-                </div>
+                <button
+                  onClick={() => toggleFullscreen()}
+                  className="invisibleButton pop"
+                >
+                  {!fullscreen ? (
+                    <Icon
+                      icon="mingcute:fullscreen-line"
+                      color="white"
+                      fontSize={50}
+                    />
+                  ) : (
+                    <Icon
+                      icon="mingcute:fullscreen-exit-line"
+                      color="white"
+                      fontSize={50}
+                    />
+                  )}
+                </button>
               </div>
             </div>
           </div>
@@ -130,7 +245,8 @@ export default function VideoPlayer() {
             autoPlay
           >
             <source
-              src="/movies/beauty-and-the-beast-deneme.mp4"
+              // src="/movies/beauty-and-the-beast-deneme.mp4"
+              src="/batb-trailer.mp4"
               type="video/mp4"
             />
             {/* <track
@@ -139,11 +255,10 @@ export default function VideoPlayer() {
               srcLang="tr"
               src="/movies/beauty-and-the-beast.vtt"
               default
-            /> */
-//}
-//          </video>
-//        </div>
-//      </div>
-//    </section>
-//  );
-//}
+            /> */}
+          </video>
+        </div>
+      </div>
+    </section>
+  );
+}

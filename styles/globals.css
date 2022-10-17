@@ -73,3 +73,18 @@ a {
 .button:hover {
   opacity: 0.75;
 }
+
+.invisibleButton {
+  border: none;
+  outline: none;
+  background: none;
+  padding: none;
+  margin: none;
+  width: fit-content;
+  height: fit-content;
+  cursor: pointer;
+}
+
+.invisibleButton:is(.pop):hover > * {
+  transform: scale(1.15);
+}
