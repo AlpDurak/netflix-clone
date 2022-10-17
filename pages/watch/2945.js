@@ -1,4 +1,19 @@
-import { Icon } from "@iconify/react";
+import React from "react";
+import styles from "/styles/Player.module.css";
+
+export default function VideoPlayer() {
+  return (
+    <iframe
+      className={styles.videoPlayerCoverScr}
+      title="Güzel ve Çirkin"
+      src="https://videoseyred.in/embed/d6b2181aabh4Tx145822UcQq85d7442f20?hideTitle=1"
+      frameBorder={0}
+      allowFullScreen
+    ></iframe>
+  );
+}
+
+/* import { Icon } from "@iconify/react";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "/styles/Player.module.css";
@@ -124,10 +139,11 @@ export default function VideoPlayer() {
               srcLang="tr"
               src="/movies/beauty-and-the-beast.vtt"
               default
-            /> */}
-          </video>
-        </div>
-      </div>
-    </section>
-  );
-}
+            /> */
+//}
+//          </video>
+//        </div>
+//      </div>
+//    </section>
+//  );
+//}
