@@ -178,7 +178,7 @@ export default function Home() {
                     {/* Play and More Info Buttons */}
                     <div className={styles.showDisplay_buttonWrap}>
                         <button onClick={() => {
-                            router.push("/watch/2945")
+                            window.location.href = "/watch/2945";
                         }} className="button medium sharp white">
                             <Icon icon="carbon:play-filled-alt" fontSize={26}/> Play
                         </button>

@@ -21,14 +21,13 @@
     inset: 0;
     z-index: -1;
 } */
-.section {
+.videoPlayerSection {
   width: 100%;
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   align-items: center;
   justify-content: center;
-
-  max-height: 100vh;
 
   background-color: #000000;
 }
@@ -75,6 +74,25 @@
   height: 100%;
   position: relative;
   z-index: 0;
+}
+
+.videoPlayer video::cue {
+  font-size: 0.9em;
+}
+
+.videoPlayer video::-webkit-media-text-track-display {
+  font-size: 0.9em;
+}
+
+.videoPlayer video::-webkit-media-text-track-container {
+  transform: translateY(-15.5%);
+  position: relative;
+  transition: transform;
+  transition-duration: .4s;
+}
+
+.videoPlayer video.idle::-webkit-media-text-track-container {
+  transform: translateY(-7%) !important;
 }
 
 .controls {
@@ -124,6 +142,8 @@
   border-radius: 50%;
   cursor: context-menu;
   background-color: var(--brand-color);
+
+  transform: translateX(-50%);
 }
 
 .videoPlayer .bottomUi .videoProgressBar .progress .videoProgressDuration {
@@ -217,6 +237,16 @@
 
 .hide {
   display: none !important;
+}
+
+.hideBottom {
+  transform: translateY(120%);
+  transition-duration: .5s;
+}
+
+.visibleBottom {
+  transform: translateY(0%);
+  transition-duration: .3s;
 }
 
 @media (max-width: 768px) {

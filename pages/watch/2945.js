@@ -1,18 +1,22 @@
 import { Icon } from "@iconify/react";
-import moment from "moment";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "/styles/Player.module.css";
 
 export default function VideoPlayer() {
   const videoElement = useRef();
   const [status, setStatus] = useState("loading");
+  const [muted, setMuted] = useState(false);
+  const [hideUI, setHideUI] = useState(false);
+  const [mouseMove, setMouseMove] = useState(false);
+  const [showVolume, setShowVolume] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [currentTime, setCurrentTime] = useState(); // seconds
-  const timeInterval = useRef();
+  const [currentSubtitle, setCurrentSubtitle] = useState();
   const videoPlayer = useRef();
+  const progressBar = useRef();
 
   let duration = videoElement.current?.duration;
-  let watched = (currentTime / duration) * 100;
+  let watched = (currentTime / duration) * 100 || 0;
 
   const exitHandler = () => {
     if (
@@ -30,29 +34,28 @@ export default function VideoPlayer() {
     document.addEventListener("webkitfullscreenchange", exitHandler);
     document.addEventListener("mozfullscreenchange", exitHandler);
     document.addEventListener("MSFullscreenChange", exitHandler);
+    window.addEventListener("mousemove", () => setMouseMove(true));
   }, []);
 
   useEffect(() => {
-    setCurrentTime(videoElement.current?.currentTime);
-  }, [videoElement.current?.currentTime]);
+    if (status === "playing") {
+      if (!mouseMove) {
+        setTimeout(() => {
+          setHideUI(true);
+        }, 3000);
+      } else if (hideUI === true) {
+        setHideUI(false);
+      }
+    }
+  }, [status, mouseMove, hideUI]);
 
   useEffect(() => {
-    if (status === "playing" && !timeInterval.current) {
-      timeInterval.current = setInterval(() => {
-        setCurrentTime((current) => current + 1);
-      }, 1000);
+    if (mouseMove) {
+      setTimeout(() => {
+        setMouseMove(false);
+      }, 3000);
     }
-
-    if (status === "paused" && timeInterval.current) {
-      clearInterval(timeInterval.current);
-      timeInterval.current = null;
-    }
-
-    if (status === "ended" && timeInterval.current) {
-      clearInterval(timeInterval.current);
-      timeInterval.current = null;
-    }
-  }, [status]);
+  }, [mouseMove]);
 
   if (videoElement.current?.ended && status !== "ended") {
     setStatus("ended");
@@ -114,6 +117,16 @@ export default function VideoPlayer() {
     }
   };
 
+  const handleTimeChange = (e) => {
+    if (progressBar && videoElement.current) {
+      const calc =
+        ((e.clientX - 30) / progressBar.current.offsetWidth) * duration;
+
+      videoElement.current.currentTime = calc;
+      setCurrentTime(calc);
+    }
+  };
+
   const updateDuration = (seconds, action) => {
     let current = currentTime;
     if (action === "-") {
@@ -145,13 +158,54 @@ export default function VideoPlayer() {
     }
   };
 
+  useEffect(() => {
+    if (
+      !videoElement.current?.paused &&
+      ["paused", "loading"].includes(status)
+    ) {
+      setStatus("playing");
+    }
+  }, [videoElement.current?.paused, status]);
+
+  //subtitle
+
+  // let turkishSubtitles = props.subs.turkish.cues;
+
+  // const nextSubtitle = () => {
+  //   turkishSubtitles.splice(parseInt(currentSubtitle.identifier) - 1, 1); // remove old sub element
+  //   setCurrentSubtitle(turkishSubtitles[parseInt(currentSubtitle.identifier)]);
+  // }
+
+  // useEffect(() => {
+  //   if(!currentSubtitle && turkishSubtitles[0].start < currentTime && currentTime < turkishSubtitles[0].end) {
+  //     setCurrentSubtitle(turkishSubtitles[0]);
+  //   }
+
+  //   if(status === "playing") {
+  //     if(currentSubtitle.start < currentTime && currentTime < currentSubtitle.end) {
+  //       setCurrentSubtitle()
+  //     }
+  //   }
+  // }, [status])
+
   return (
-    <section className={styles.section}>
+    <section
+      style={hideUI ? { cursor: "none" } : {}}
+      className={styles.videoPlayerSection}
+    >
       <div className={styles.container}>
         <div ref={videoPlayer} className={styles.videoPlayer}>
-          <div className={styles.bottomUi}>
+          <div
+            className={`${styles.bottomUi} ${
+              hideUI ? styles.hideBottom : styles.visibleBottom
+            }`}
+          >
             <div className={styles.videoProgressBar}>
-              <div className={styles.progress}>
+              <div
+                ref={progressBar}
+                onClick={handleTimeChange}
+                className={styles.progress}
+              >
                 <div
                   style={{ width: watched + "%" }}
                   className={styles.videoProgressDuration}
@@ -203,12 +257,23 @@ export default function VideoPlayer() {
                   />
                 </button>
 
-                <button className={`${styles.volume} invisibleButton pop`}>
-                  <Icon
-                    icon="eva:volume-up-outline"
-                    color="white"
-                    fontSize={45}
-                  />
+                <button
+                  onClick={() => setMuted((current) => !current)}
+                  className={`${styles.volume} invisibleButton pop`}
+                >
+                  {!muted ? (
+                    <Icon
+                      icon="eva:volume-up-outline"
+                      color="white"
+                      fontSize={45}
+                    />
+                  ) : (
+                    <Icon
+                      icon="eva:volume-off-outline"
+                      color="white"
+                      fontSize={45}
+                    />
+                  )}
                   <input className={styles.hide} type="range" />
                 </button>
               </div>
@@ -239,23 +304,33 @@ export default function VideoPlayer() {
           </div>
           <video
             ref={videoElement}
+            onTimeUpdate={(e) => {
+              setCurrentTime(e.currentTarget.currentTime);
+            }}
+            className={`${hideUI ? styles.idle : ""}`}
             onClick={() => toggleVideo()}
             poster="/batb-displayImage.jpeg"
             preload="auto"
             autoPlay
+            muted={muted}
+            onPlay={() => {
+              if (status !== "playing") {
+                setStatus("playing");
+              }
+            }}
           >
             <source
-              // src="/movies/beauty-and-the-beast-deneme.mp4"
-              src="/batb-trailer.mp4"
+              src="https://wowl.me/files/movies/beauty-and-the-beast.mp4"
+              // src="/batb-trailer.mp4"
               type="video/mp4"
             />
-            {/* <track
+            <track
               label="Turkce"
               kind="subtitles"
               srcLang="tr"
-              src="/movies/beauty-and-the-beast.vtt"
+              src="/subtitles/beauty-and-the-beast.vtt"
               default
-            /> */}
+            />
           </video>
         </div>
       </div>
