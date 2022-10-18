@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import { FragmentsOnCompositeTypesRule } from "graphql";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "/styles/Player.module.css";
 
