@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import { FragmentsOnCompositeTypesRule } from "graphql";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "/styles/Player.module.css";
 
@@ -11,12 +12,12 @@ export default function VideoPlayer() {
   const [showVolume, setShowVolume] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [currentTime, setCurrentTime] = useState(); // seconds
-  const [currentSubtitle, setCurrentSubtitle] = useState();
   const videoPlayer = useRef();
   const progressBar = useRef();
 
   let duration = videoElement.current?.duration;
   let watched = (currentTime / duration) * 100 || 0;
+  let readyState = videoElement.current?.readyState;
 
   const exitHandler = () => {
     if (
@@ -38,14 +39,28 @@ export default function VideoPlayer() {
   }, []);
 
   useEffect(() => {
+    if (readyState !== 4) {
+      setStatus("loading");
+    }
+  }, [readyState]);
+
+  useEffect(() => {
     if (status === "playing") {
       if (!mouseMove) {
         setTimeout(() => {
-          setHideUI(true);
+            if(!mouseMove) {
+              setHideUI(true);
+            } else if (hideUI === true) {
+              setHideUI(false);
+            }
         }, 3000);
       } else if (hideUI === true) {
         setHideUI(false);
       }
+    }
+
+    if (status !== "playing" && hideUI === true) {
+      setHideUI(false);
     }
   }, [status, mouseMove, hideUI]);
 
@@ -60,6 +75,19 @@ export default function VideoPlayer() {
   if (videoElement.current?.ended && status !== "ended") {
     setStatus("ended");
   }
+
+  useEffect(() => {
+    let watched = parseInt(window.localStorage.getItem("watched")) || null;
+
+    if (((watched || 0) + 10) < currentTime) {
+      window.localStorage.setItem("watched", currentTime);
+    }
+  
+    if(currentTime < 10 && watched) {
+      videoElement.current.currentTime = watched;
+      setCurrentTime(watched);
+    }
+  }, [currentTime])
 
   var actualMinutes =
     (duration - currentTime) / 60 ||
@@ -167,32 +195,16 @@ export default function VideoPlayer() {
     }
   }, [videoElement.current?.paused, status]);
 
-  //subtitle
-
-  // let turkishSubtitles = props.subs.turkish.cues;
-
-  // const nextSubtitle = () => {
-  //   turkishSubtitles.splice(parseInt(currentSubtitle.identifier) - 1, 1); // remove old sub element
-  //   setCurrentSubtitle(turkishSubtitles[parseInt(currentSubtitle.identifier)]);
-  // }
-
-  // useEffect(() => {
-  //   if(!currentSubtitle && turkishSubtitles[0].start < currentTime && currentTime < turkishSubtitles[0].end) {
-  //     setCurrentSubtitle(turkishSubtitles[0]);
-  //   }
-
-  //   if(status === "playing") {
-  //     if(currentSubtitle.start < currentTime && currentTime < currentSubtitle.end) {
-  //       setCurrentSubtitle()
-  //     }
-  //   }
-  // }, [status])
-
   return (
     <section
       style={hideUI ? { cursor: "none" } : {}}
       className={styles.videoPlayerSection}
     >
+      {status === "loading" && (
+        <div className={styles.loading}>
+          <div className={styles.loader}></div>
+        </div>
+      )}
       <div className={styles.container}>
         <div ref={videoPlayer} className={styles.videoPlayer}>
           <div
@@ -309,6 +321,23 @@ export default function VideoPlayer() {
             }}
             className={`${hideUI ? styles.idle : ""}`}
             onClick={() => toggleVideo()}
+            onLoadStart={() => {
+              setStatus("loading");
+            }}
+            onLoad={() => {
+              setStatus("paused");
+            }}
+            onLoadedMetadata={() => {
+              setStatus("paused");
+            }}
+            onLoadedData={() => {
+              setStatus("paused");
+            }}
+            onPlaying={() => {
+              if (status !== "playing") {
+                setStatus("playing");
+              }
+            }}
             poster="/batb-displayImage.jpeg"
             preload="auto"
             autoPlay
